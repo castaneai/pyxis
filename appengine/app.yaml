@@ -1,0 +1,10 @@
+runtime: go
+api_version: go1.9
+service: pyxis
+
+handlers:
+- url: /.*
+  script: _go_app
+
+includes:
+- secrets.yaml

@@ -1,0 +1,4 @@
+cron:
+- description: "test"
+  url: /
+  schedule: every 3 minutes
