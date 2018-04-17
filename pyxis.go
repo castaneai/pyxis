@@ -3,6 +3,7 @@ package pyxis
 import (
 	"context"
 	"encoding/json"
+	"github.com/castaneai/asaka"
 	"github.com/pkg/errors"
 	"net/http"
 	"time"
@@ -28,13 +29,13 @@ func NewClient(hc *http.Client, sessionID string) (*Client, error) {
 type Notification struct {
 	Id         int       `json:"id" datastore:"id"`
 	Content    string    `json:"content" datastore:"content,noindex"`
-	NotifiedAt time.Time `json:"notifiedAt" datastore:"notifiedAt,noindex"`
+	NotifiedAt time.Time `json:"notifiedAt" datastore:"notifiedAt"`
 	LinkURL    string    `json:"linkUrl" datastore:"linkUrl,noindex"`
 	IconURL    string    `json:"iconUrl" datastore:"iconUrl,noindex"`
 }
 
 type responseJSONBody struct {
-	Items []Notification `json:"items"`
+	Items []*Notification `json:"items"`
 }
 
 type responseJSON struct {
@@ -48,7 +49,22 @@ func createSessionCookie(session string) *http.Cookie {
 	return &http.Cookie{Name: sessionCookieName, Value: session, Expires: expires, HttpOnly: true}
 }
 
-func (c *Client) GetNotifications(ctx context.Context) ([]Notification, error) {
+func (c *Client) GetUsername(ctx context.Context) (string, error) {
+	opts := &asaka.ClientOption{
+		Cookies: map[string]http.Cookie{sessionCookieName: *createSessionCookie(c.sessionID)},
+	}
+	ac, err := asaka.NewClient(c.hc, opts)
+	if err != nil {
+		return "", err
+	}
+	doc, err := ac.GetDoc(ctx, baseURL)
+	if err != nil {
+		return "", err
+	}
+	return doc.Find(".user-name").Text(), nil
+}
+
+func (c *Client) GetNotifications(ctx context.Context) ([]*Notification, error) {
 	req, err := http.NewRequest("GET", baseURL+"/ajax/notification", nil)
 	if err != nil {
 		return nil, err
@@ -67,5 +83,11 @@ func (c *Client) GetNotifications(ctx context.Context) ([]Notification, error) {
 	if rj.Error {
 		return nil, errors.New(rj.Message)
 	}
-	return rj.Body.Items, nil
+
+	var result []*Notification
+	// reverse slice
+	for i := len(rj.Body.Items) - 1; i >= 0; i-- {
+		result = append(result, rj.Body.Items[i])
+	}
+	return result, nil
 }
