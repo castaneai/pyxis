@@ -152,6 +152,7 @@ func postNotificationToSlack(ctx context.Context, slackWebhookURL string, notifi
 		Text:    text,
 		IconURL: notification.IconURL,
 	}
+	log.Debugf(ctx, "post to slack: %+v", mes)
 	err := postSlackMessage(ctx, slackWebhookURL, mes)
 	if err != nil {
 		return err
