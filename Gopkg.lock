@@ -14,12 +14,6 @@
   version = "v1.0.0"
 
 [[projects]]
-  name = "github.com/ashwanthkumar/slack-go-webhook"
-  packages = ["."]
-  revision = "58b9a44feb242f0ced1a85304b1b6af57b770234"
-  version = "v0.2"
-
-[[projects]]
   branch = "master"
   name = "github.com/castaneai/asaka"
   packages = ["."]
@@ -38,18 +32,6 @@
   revision = "2e24dd3c29e5fe86a6ac41c713f2e2840b3062e6"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/moul/http2curl"
-  packages = ["."]
-  revision = "9ac6cf4d929b2fa8fd2d2e6dec5bb0feb4f4911d"
-
-[[projects]]
-  name = "github.com/parnurzeal/gorequest"
-  packages = ["."]
-  revision = "a578a48e8d6ca8b01a3b18314c43c6716bb5f5a3"
-  version = "v0.2.15"
-
-[[projects]]
   name = "github.com/pkg/errors"
   packages = ["."]
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
@@ -61,32 +43,9 @@
   packages = [
     "context",
     "html",
-    "html/atom",
-    "idna",
-    "publicsuffix"
+    "html/atom"
   ]
   revision = "8d16fa6dc9a85c1cd3ed24ad08ff21cf94f10888"
-
-[[projects]]
-  name = "golang.org/x/text"
-  packages = [
-    "collate",
-    "collate/build",
-    "internal/colltab",
-    "internal/gen",
-    "internal/tag",
-    "internal/triegen",
-    "internal/ucd",
-    "language",
-    "secure/bidirule",
-    "transform",
-    "unicode/bidi",
-    "unicode/cldr",
-    "unicode/norm",
-    "unicode/rangetable"
-  ]
-  revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
-  version = "v0.3.0"
 
 [[projects]]
   name = "google.golang.org/appengine"
@@ -110,6 +69,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "be6386a80d6b8c38e8591e0070c7793c8dcbe75cd30635e8f0e340760a8fa48c"
+  inputs-digest = "ba7eb95bdd75f7a860db1ef306e0a6b6af6f1fb48154594c498344c01de8b174"
   solver-name = "gps-cdcl"
   solver-version = 1

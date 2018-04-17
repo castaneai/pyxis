@@ -3,9 +3,10 @@ package main
 import (
 	"net/http"
 
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
-	"github.com/ashwanthkumar/slack-go-webhook"
 	"github.com/castaneai/pyxis"
 	"github.com/grokify/html-strip-tags-go"
 	"github.com/pkg/errors"
@@ -13,6 +14,8 @@ import (
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/log"
 	"google.golang.org/appengine/urlfetch"
+	"io"
+	"io/ioutil"
 	"os"
 )
 
@@ -51,7 +54,7 @@ func handle(w http.ResponseWriter, r *http.Request) {
 			log.Errorf(ctx, "%+v", err)
 			return
 		}
-		if err := postNewNotificationsToSlack(fns); err != nil {
+		if err := postNewNotificationsToSlack(ctx, fns); err != nil {
 			log.Errorf(ctx, "%+v", err)
 			return
 		}
@@ -59,13 +62,13 @@ func handle(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func postNewNotificationsToSlack(ns []*pyxis.Notification) error {
+func postNewNotificationsToSlack(ctx context.Context, ns []*pyxis.Notification) error {
 	slackWebhookURL := os.Getenv("PYXIS_SLACK_WEBHOOK_URL")
 	if slackWebhookURL == "" {
 		return errors.New("env: PYXIS_SLACK_WEBHOOK_URL not set")
 	}
 	for _, n := range ns {
-		if err := postToSlack(slackWebhookURL, n); err != nil {
+		if err := postNotificationToSlack(ctx, slackWebhookURL, n); err != nil {
 			return err
 		}
 	}
@@ -119,15 +122,39 @@ func saveNewNotifications(ctx context.Context, notifications []*pyxis.Notificati
 	}, nil)
 }
 
-func postToSlack(slackWebhookURL string, notification *pyxis.Notification) error {
-	text := strip.StripTags(notification.Content)
-	payload := slack.Payload{
-		Text:    text,
-		IconUrl: notification.IconURL,
+type SlackMessage struct {
+	Text    string `json:"text"`
+	IconURL string `json:"icon_url,omitempty"`
+}
+
+func postSlackMessage(ctx context.Context, slackWebHookURL string, message *SlackMessage) error {
+	hc := urlfetch.Client(ctx)
+	buf, err := json.Marshal(message)
+	if err != nil {
+		return err
 	}
-	err := slack.Send(slackWebhookURL, "", payload)
-	if len(err) > 0 {
-		return err[0]
+	resp, err := hc.Post(slackWebHookURL, "application/json", bytes.NewReader(buf))
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	io.Copy(ioutil.Discard, resp.Body)
+
+	if resp.StatusCode >= 400 {
+		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+	return nil
+}
+
+func postNotificationToSlack(ctx context.Context, slackWebhookURL string, notification *pyxis.Notification) error {
+	text := strip.StripTags(notification.Content)
+	mes := &SlackMessage{
+		Text:    text,
+		IconURL: notification.IconURL,
+	}
+	err := postSlackMessage(ctx, slackWebhookURL, mes)
+	if err != nil {
+		return err
 	}
 	return nil
 }
