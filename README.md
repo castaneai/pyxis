@@ -12,4 +12,4 @@ Set following environment variables on CircleCI project settings
 - `PYXIS_SESSION` - Pixiv PHPSESSID value
 - `PYXIS_SLACK_WEBHOOK_URL` - Slack incoming webhook URL
 
-Then you can deploy with `git push origin master` and access https://mikane-dot-GCP_PROJECT_ID.appspot.com/
+Then you can deploy with `git push origin master` and access https://pyxis-dot-GCP_PROJECT_ID.appspot.com/
