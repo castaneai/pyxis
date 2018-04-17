@@ -39,9 +39,9 @@ type responseJSONBody struct {
 }
 
 type responseJSON struct {
-	Error   bool             `json:"error"`
-	Message string           `json:"message"`
-	Body    responseJSONBody `json:"body"`
+	Error   bool              `json:"error"`
+	Message string            `json:"message"`
+	Body    *responseJSONBody `json:"body"`
 }
 
 func createSessionCookie(session string) *http.Cookie {

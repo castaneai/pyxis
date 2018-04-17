@@ -14,7 +14,7 @@ jobs:
             echo $GCP_SECRET_KEY | base64 -i --decode > $HOME/.secret-key.json
             gcloud auth activate-service-account --key-file $HOME/.secret-key.json
             gcloud config set project $GCP_PROJECT_ID
-            echo -e "env_variables:\n  PYXIS_SESSION: \"$MF_SESSION\"\n  PYXIS_SLACK_WEBHOOK_URL: \"$PYXIS_SLACK_WEBHOOK_URL\"" > ./appengine/secrets.yaml
+            echo -e "env_variables:\n  PYXIS_SESSION: \"$PYXIS_SESSION\"\n  PYXIS_SLACK_WEBHOOK_URL: \"$PYXIS_SLACK_WEBHOOK_URL\"" > ./appengine/secrets.yaml
             appcfg.py update --application=$GCP_PROJECT_ID --version=$(echo $CIRCLE_BRANCH | sed "s/\//\-/g") --oauth2_access_token=$(gcloud auth print-access-token 2> /dev/null) ./appengine/app.yaml
 workflows:
   version: 2
