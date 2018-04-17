@@ -1,4 +1,5 @@
 cron:
 - description: "test"
   url: /
-  schedule: every 3 minutes
+  schedule: every 10 minutes
+  target: pyxis
