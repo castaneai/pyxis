@@ -1,0 +1,24 @@
+version: 2.0
+jobs:
+  deploy:
+    working_directory: /go/src/github.com/castaneai/pyxis
+    docker:
+      - image: mercari/appengine-go:1.9-slim
+    steps:
+      - checkout
+      - run:
+          name: Deploy to App Engine
+          command: |
+            go get github.com/golang/dep/cmd/dep
+            dep ensure
+            echo $GCP_SECRET_KEY | base64 -i --decode > $HOME/.secret-key.json
+            gcloud auth activate-service-account --key-file $HOME/.secret-key.json
+            gcloud config set project $GCP_PROJECT_ID
+            echo -e "env_variables:\n  PYXIS_SESSION: \"$MF_SESSION\"\n  PYXIS_SLACK_WEBHOOK_URL: \"$PYXIS_SLACK_WEBHOOK_URL\"" > ./appengine/secrets.yaml
+            appcfg.py update --application=$GCP_PROJECT_ID --version=$(echo $CIRCLE_BRANCH | sed "s/\//\-/g") --oauth2_access_token=$(gcloud auth print-access-token 2> /dev/null) ./appengine/app.yaml
+workflows:
+  version: 2
+
+  deploy:
+    jobs:
+      - deploy
