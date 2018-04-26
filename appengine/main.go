@@ -89,7 +89,7 @@ func isNewNotification(n *pyxis.Notification, last *pyxis.Notification) bool {
 	if last == nil {
 		return true
 	}
-	return n.Id != last.Id && !n.NotifiedAt.Before(last.NotifiedAt)
+	return n.Id != last.Id && n.NotifiedAt.After(last.NotifiedAt)
 }
 
 const (
