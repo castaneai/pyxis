@@ -1,5 +1,0 @@
-cron:
-- description: "test"
-  url: /
-  schedule: every 10 minutes
-  target: pyxis

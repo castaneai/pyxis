@@ -1,0 +1,31 @@
+{
+  "name": "pyxis",
+  "version": "1.0.0",
+  "description": "Pixiv notifications to Slack",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/castaneai/pyxis.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/castaneai/pyxis/issues"
+  },
+  "homepage": "https://github.com/castaneai/pyxis#readme",
+  "dependencies": {
+    "@google-cloud/datastore": "^2.0.0",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.10",
+    "@types/request": "^2.48.1",
+    "@types/request-promise-native": "^1.0.15",
+    "jest": "^23.6.0"
+  }
+}
